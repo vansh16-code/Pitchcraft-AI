@@ -43,8 +43,7 @@ pitchcraft/
 ├── requirements.txt
 └── db.sqlite3
 
-yaml
-Copy code
+
 
 ---
 
@@ -70,13 +69,12 @@ python manage.py runserver
 🧠 Start Ollama (LLaMA2 Model)
 Make sure Ollama is installed and set up.
 
-bash
-Copy code
+
 ollama serve
 ollama run llama2
 🌐 Frontend (React + Vite)
 bash
-Copy code
+
 cd frontend
 npm install
 npm run dev
@@ -84,9 +82,9 @@ Visit: http://localhost:5173
 
 🔄 API Usage
 Endpoint
-swift
-Copy code
+
 POST /api/pitch/submit/
+
 Sample Payload
 json
 Copy code
@@ -95,6 +93,7 @@ Copy code
   "product_name": "EcoBrush",
   "pitch_text": "A biodegradable toothbrush with AI-driven brushing tracker."
 }
+
 Sample Response
 json
 Copy code
