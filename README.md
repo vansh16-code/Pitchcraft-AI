@@ -32,16 +32,32 @@ Built with **Django + Ninja API** (backend) and **React + TailwindCSS** (fronten
 
 pitchcraft/
 ├── core/
-│ ├── models.py
-│ ├── api/
-│ │ ├── init.py # API router
-│ │ ├── pitch.py # Endpoint logic
-│ │ └── schemas.py # Pydantic schemas
-├── frontend/ # React app
-│ └── ...
+│   ├── __init__.py
+│   ├── models.py
+│   ├── admin.py
+│   └── api/
+│       ├── __init__.py        # API registration (NinjaAPI instance)
+│       ├── pitch.py           # Routes and Ollama logic
+│       └── schemas.py         # Pydantic models
+│
+├── frontend/                  # Vite + React frontend
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── src/
+│       ├── App.jsx
+│       ├── main.jsx
+│       ├── api/
+│       │   └── axios.js       # Axios config
+│       └── components/
+│           └── PitchForm.jsx  # Pitch submission UI
+│
+├── db.sqlite3
 ├── manage.py
 ├── requirements.txt
-└── db.sqlite3
+└── README.md
+
 
 
 
