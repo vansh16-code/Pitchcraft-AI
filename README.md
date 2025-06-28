@@ -27,39 +27,7 @@ Built with **Django + Ninja API** (backend) and **React + TailwindCSS** (fronten
 | API       | Django Ninja + Axios           |
 
 ---
-
-## 📂 Project Structure
-
-pitchcraft/
-├── core/
-│   ├── __init__.py
-│   ├── models.py
-│   ├── admin.py
-│   └── api/
-│       ├── __init__.py        # API registration (NinjaAPI instance)
-│       ├── pitch.py           # Routes and Ollama logic
-│       └── schemas.py         # Pydantic models
-│
-├── frontend/                  # Vite + React frontend
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   └── src/
-│       ├── App.jsx
-│       ├── main.jsx
-│       ├── api/
-│       │   └── axios.js       # Axios config
-│       └── components/
-│           └── PitchForm.jsx  # Pitch submission UI
-│
-├── db.sqlite3
-├── manage.py
-├── requirements.txt
-└── README.md
-
-
-
+\
 
 ---
 
