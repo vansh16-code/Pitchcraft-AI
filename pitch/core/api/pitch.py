@@ -3,12 +3,13 @@ from core.models import Pitch
 from core.api.schemas import PitchIn
 from django.http import HttpRequest
 from typing import cast
-import requests
+import httpx
 import json
+from asgiref.sync import sync_to_async
 
 router = Router()
 
-def generate_ai_feedback(pitch_text: str) -> str:
+async def generate_ai_feedback(pitch_text: str) -> str:
     prompt = (
         "Give constructive, helpful feedback on the following product pitch. "
         "Don't hold back—pinpoint effective areas and areas of improvement. "
@@ -17,40 +18,33 @@ def generate_ai_feedback(pitch_text: str) -> str:
     )
 
     try:
-        response = requests.post(
-            "http://localhost:11434/api/generate",
-            json={"model": "llama2", "prompt": prompt},
-            timeout=60,
-            stream=True
-        )
-
-        feedback = ""
-        for line in response.iter_lines():
-            if line:
-                try:
-                    chunk = json.loads(line)
-                    feedback += chunk.get("response", "")
-                except json.JSONDecodeError:
-                    continue
-
-        return feedback.strip() or "No meaningful feedback was generated."
-
+        async with httpx.AsyncClient(timeout=60) as client:
+            async with client.stream(
+                "POST",
+                "http://localhost:11434/api/generate",
+                json={"model": "llama2", "prompt": prompt},
+            ) as response:
+                feedback = ""
+                async for line in response.aiter_lines():
+                    if line:
+                        try:
+                            chunk = json.loads(line)
+                            feedback += chunk.get("response", "")
+                        except json.JSONDecodeError:
+                            continue
+                return feedback.strip() or "No meaningful feedback was generated."
     except Exception as e:
         return f"Error calling Ollama: {str(e)}"
 
 @router.post("/submit/")
-def submit_pitch(request: HttpRequest, data: PitchIn):
-    # ✅ Generate feedback first
-    feedback = generate_ai_feedback(data.pitch_text)
-
-    # ✅ Then create the Pitch using the feedback
-    pitch = cast(Pitch, Pitch.objects.create(
+async def submit_pitch(request: HttpRequest, data: PitchIn):
+    feedback = await generate_ai_feedback(data.pitch_text)
+    pitch = await sync_to_async(Pitch.objects.create)(
         seller_name=data.seller_name,
         product_name=data.product_name,
         pitch_text=data.pitch_text,
         ai_feedback=feedback
-    ))
-
+    )
     return {
         "message": "Pitch submitted successfully",
         "id": pitch.id, #type:ignore
