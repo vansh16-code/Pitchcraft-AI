@@ -1,45 +1,47 @@
 # 🎤 PitchCraft AI
 
-PitchCraft AI is a full-stack web app that allows users (sellers or founders) to submit product pitches and receive **AI-powered investor-style feedback**.  
-Built using **Django + Ninja API** for the backend, **React + Tailwind** for the frontend, and **Ollama (LLaMA2)** for AI responses.
+PitchCraft AI is a full-stack AI-powered feedback tool that allows users to submit product pitches and receive constructive, investor-style feedback instantly using **LLaMA2 via Ollama**.  
+
+Built with **Django + Ninja API** (backend) and **React + TailwindCSS** (frontend).
 
 ---
 
 ## 🚀 Features
 
-- ✍️ Submit your product pitch via an interactive form
-- 🤖 Receive instant AI-generated feedback (simulating an investor)
-- 📄 Feedback is saved in the database for future use
-- ⚙️ Uses LLaMA 2 via `Ollama` locally
-- 🌐 REST API built with Django Ninja
-- 🎨 Stylish React frontend with TailwindCSS
+- 📝 Submit product pitches via a sleek web form
+- 🤖 Get instant AI-generated investor-style feedback
+- 💾 Feedback stored in database for future reference
+- ⚙️ Built with Django Ninja REST API & served to a React frontend
+- 🧠 Uses LLaMA2 model locally with Ollama API
 
 ---
 
-## 🛠️ Tech Stack
+## 🧱 Tech Stack
 
-| Layer      | Tech                          |
-|------------|-------------------------------|
-| Frontend   | React (Vite) + Tailwind CSS   |
-| Backend    | Django + Django Ninja         |
-| AI Engine  | Ollama running LLaMA2 locally |
-| Database   | SQLite (default)              |
-| API Client | Axios                         |
+| Layer     | Technology                     |
+|-----------|--------------------------------|
+| Frontend  | React (Vite) + Tailwind CSS    |
+| Backend   | Django + Django Ninja          |
+| AI Engine | Ollama with LLaMA2 model       |
+| Database  | SQLite (default)               |
+| API       | Django Ninja + Axios           |
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
 pitchcraft/
 ├── core/
 │ ├── models.py
 │ ├── api/
-│ │ ├── init.py # API registration
-│ │ ├── pitch.py # Router + logic
+│ │ ├── init.py # API router
+│ │ ├── pitch.py # Endpoint logic
 │ │ └── schemas.py # Pydantic schemas
+├── frontend/ # React app
+│ └── ...
 ├── manage.py
-├── db.sqlite3
-└── frontend/ # React Vite frontend
+├── requirements.txt
+└── db.sqlite3
 
 yaml
 Copy code
@@ -48,35 +50,31 @@ Copy code
 
 ## ⚙️ Setup Instructions
 
-### 📦 Backend (Django + Ninja)
-
-1. Create virtual env & install dependencies:
+### 🔧 Backend (Django + Ninja)
 
 ```bash
+# Create virtual environment
 python -m venv env
-env\Scripts\activate          # Windows
+env\Scripts\activate     # On Windows
 # or
-source env/bin/activate       # macOS/Linux
+source env/bin/activate  # On macOS/Linux
 
+# Install dependencies
 pip install -r requirements.txt
-Run migrations:
 
-bash
-Copy code
+# Run migrations
 python manage.py migrate
-Start the server:
 
-bash
-Copy code
+# Start Django development server
 python manage.py runserver
-🧠 Start Ollama AI server
-Make sure Ollama is installed and running:
+🧠 Start Ollama (LLaMA2 Model)
+Make sure Ollama is installed and set up.
 
 bash
 Copy code
 ollama serve
 ollama run llama2
-💻 Frontend (React + Vite)
+🌐 Frontend (React + Vite)
 bash
 Copy code
 cd frontend
@@ -84,46 +82,67 @@ npm install
 npm run dev
 Visit: http://localhost:5173
 
-📬 Sample Pitch Payload
+🔄 API Usage
+Endpoint
+swift
+Copy code
+POST /api/pitch/submit/
+Sample Payload
 json
 Copy code
 {
   "seller_name": "Aarav Sharma",
   "product_name": "EcoBrush",
-  "pitch_text": "A biodegradable toothbrush made from bamboo with AI-driven brushing tracker."
+  "pitch_text": "A biodegradable toothbrush with AI-driven brushing tracker."
 }
-🛡️ CORS Setup (in Django)
+Sample Response
+json
+Copy code
+{
+  "message": "Pitch submitted successfully",
+  "id": 7,
+  "ai_feedback": "Your pitch is innovative. To strengthen it, add market validation..."
+}
+⚠️ CORS Setup (for React ↔ Django)
 In settings.py:
 
 python
 Copy code
 INSTALLED_APPS = [
     ...
-    'corsheaders',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     ...
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # for development only
-💡 Future Ideas
-User accounts & pitch history dashboard
+CORS_ALLOW_ALL_ORIGINS = True  # Development only
+🛣️ Roadmap
+ 🧑‍💼 User accounts & pitch history
 
-AI persona selection (Shark Tank, VC, Angel)
+ 📊 Dashboard to view submitted pitches
 
-Upload video/audio pitches
+ 🎭 AI personality selector (VC / Shark / Angel Investor)
 
-Scoring system & feedback comparison
+ 📹 Upload video/audio pitches
 
-🧠 Credits
+ 📈 Feedback scoring system
+
+📘 License
+This project is licensed under the MIT License.
+
+🙌 Acknowledgements
 Django
 
 Django Ninja
 
 Ollama
 
+LLaMA 2
+
 React
 
-Tailwind CSS
+TailwindCSS
+
