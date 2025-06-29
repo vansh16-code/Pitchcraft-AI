@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api/axios";
+// import api from "../api/axios"; // No longer needed for streaming
 
 export default function PitchForm() {
   const [form, setForm] = useState({
@@ -9,6 +9,7 @@ export default function PitchForm() {
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [streamedFeedback, setStreamedFeedback] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,9 +18,44 @@ export default function PitchForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setResult(null);
+    setStreamedFeedback("");
     try {
-      const res = await api.post("/pitch/submit/", form);
-      setResult(res.data);
+      // Use fetch for streaming
+      const response = await fetch("http://127.0.0.1:8000/api/pitch/submit/stream/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.body) throw new Error("No response body");
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let feedback = "";
+      let done = false;
+      let jsonBuffer = "";
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          jsonBuffer += chunk;
+          // Try to parse as JSON if possible
+          try {
+            const parsed = JSON.parse(jsonBuffer);
+            setResult(parsed);
+            setStreamedFeedback(parsed.ai_feedback || "");
+            jsonBuffer = "";
+            break; // End after full JSON is received
+          } catch {
+            // Not yet a full JSON, treat as streaming text
+            feedback += chunk;
+            setStreamedFeedback((prev) => prev + chunk);
+          }
+        }
+      }
     } catch (err) {
       alert("❌ Error submitting pitch.");
     } finally {
@@ -67,10 +103,10 @@ export default function PitchForm() {
           </button>
         </form>
 
-        {result && (
+        {(streamedFeedback || (result && result.ai_feedback)) && (
           <div className="mt-8 bg-white border-l-4 border-blue-600 p-6 rounded-lg shadow-sm">
             <h3 className="text-xl font-bold text-blue-800 mb-2">💡 AI Feedback:</h3>
-            <p className="text-gray-700 whitespace-pre-wrap">{result.ai_feedback}</p>
+            <p className="text-gray-700 whitespace-pre-wrap">{streamedFeedback || (result && result.ai_feedback)}</p>
           </div>
         )}
       </div>
